@@ -78,6 +78,7 @@
             this.Controls.Add(this.winlable);
             this.Controls.Add(this.p2scorelable);
             this.Controls.Add(this.p1scorelable);
+            this.DoubleBuffered = true;
             this.Name = "Form1";
             this.Text = "Form1";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
