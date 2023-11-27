@@ -11,6 +11,7 @@ using System.Windows.Forms;
 namespace pog
 {
     public partial class Form1 : Form
+       
     {
         Rectangle player1 = new Rectangle(10, 170, 10, 60);
         Rectangle player2 = new Rectangle(580, 170, 10, 60);
@@ -40,16 +41,16 @@ namespace pog
             switch (e.KeyCode)
             {
                 case Keys.W:
-                    wDown = false;
+                    wDown = true;
                     break;
                 case Keys.S:
-                    sDown = false;
+                    sDown = true;
                     break;
                 case Keys.Up:
-                    upArrowDown = false;
+                    upArrowDown = true;
                     break;
                 case Keys.Down:
-                    downArrowDown = false;
+                    downArrowDown = true;
                     break;
             }
 
@@ -80,6 +81,88 @@ namespace pog
             ball.X += ballXSpeed;
             ball.Y += ballYSpeed;
 
+
+            //check if ball hit top or bottom wall and change direction if it does 
+            if (ball.Y < 0 || ball.Y > this.Height - ball.Height)
+            {
+                ballYSpeed *= -1;  // or: ballYSpeed = -ballYSpeed; 
+            }
+
+
+
+            //move player 1 
+            if (wDown == true && player1.Y > 0)
+            {
+                player1.Y -= playerSpeed;
+            }
+
+            if (sDown == true && player1.Y < this.Height - player1.Height)
+            {
+                player1.Y += playerSpeed;
+            }
+
+            //move player 2 
+            if (upArrowDown == true && player2.Y > 0)
+            {
+                player2.Y -= playerSpeed;
+            }
+
+            if (downArrowDown == true && player2.Y < this.Height - player2.Height)
+            {
+                player2.Y += playerSpeed;
+            }
+
+            //check if ball hits either player. If it does change the direction 
+            //and place the ball in front of the player hit 
+            if (player1.IntersectsWith(ball))
+            {
+                ballXSpeed *= -1;
+                ball.X = player1.X + ball.Width;
+            }
+            else if (player2.IntersectsWith(ball))
+            {
+                ballXSpeed *= -1;
+                ball.X = player2.X - ball.Width;
+            }
+
+            //check if a player missed the ball and if true add 1 to score of other player  
+            if (ball.X < 0)
+            {
+                player2Score++;
+                p2scorelable.Text = $"{player2Score}";
+
+                ball.X = 295;
+                ball.Y = 195;
+
+                player1.Y = 170;
+                player2.Y = 170;
+            }
+            else if (ball.X > 600)
+            {
+                player1Score++;
+                p1scorelable.Text = $"{player1Score}";
+
+                ball.X = 295;
+                ball.Y = 195;
+
+                player1.Y = 170;
+                player2.Y = 170;
+            }
+
+            // check score and stop game if either player is at 3 
+            if (player1Score == 3)
+            {
+                gamertimer.Enabled = false;
+                winlable.Visible = true;
+               winlable.Text = "Player 1 Wins!!";
+            }
+            else if (player2Score == 3)
+            {
+                gamertimer.Enabled = false;
+                winlable.Visible = true;
+                winlable.Text = "Player 2 Wins!!";
+            }
+
             Refresh();
         }
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -89,6 +172,6 @@ namespace pog
             e.Graphics.FillRectangle(whiteBrush, ball);
         }
 
-      
+        
     }
 }
